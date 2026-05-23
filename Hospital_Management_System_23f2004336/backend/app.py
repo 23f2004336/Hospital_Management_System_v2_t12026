@@ -82,7 +82,7 @@ def send_hospital_email(to_address, subject, content, is_html=False):
     from email.message import EmailMessage
     
     SENDER_EMAIL = "guptashubhi006@gmail.com"
-    APP_PASSWORD = "nbhl aiyl uiyk liks"
+    APP_PASSWORD = "abcd efgh ijkl mnop" # replace with your google app password
 
     msg = EmailMessage()
     msg.set_content(content)
