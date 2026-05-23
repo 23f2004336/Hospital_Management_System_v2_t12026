@@ -11,9 +11,9 @@
 [![Celery](https://img.shields.io/badge/Celery-5.0+-37814A.svg?logo=celery&logoColor=white)](https://docs.celeryq.dev/)
 [![Bootstrap](https://img.shields.io/badge/Bootstrap-5.0+-7952B3.svg?logo=bootstrap&logoColor=white)](https://getbootstrap.com/)
 
-<img src="https://img.shields.io/badge/Status-Complete-success" alt="Status">
-<img src="https://img.shields.io/badge/Course-App%20Dev%20II-brightgreen" alt="App Dev II">
-<img src="https://img.shields.io/badge/IIT%20Madras-Data%20Science-blue" alt="IIT Madras">
+<img src="[https://img.shields.io/badge/Status-Complete-success](https://img.shields.io/badge/Status-Complete-success)" alt="Status">
+<img src="[https://img.shields.io/badge/Course-App%20Dev%20II-brightgreen](https://img.shields.io/badge/Course-App%20Dev%20II-brightgreen)" alt="App Dev II">
+<img src="[https://img.shields.io/badge/IIT%20Madras-Data%20Science-blue](https://img.shields.io/badge/IIT%20Madras-Data%20Science-blue)" alt="IIT Madras">
 
 ---
 
@@ -30,7 +30,6 @@
 - [🎯 Project Overview](#-project-overview)
 - [✨ Key Features](#-key-features)
 - [🏗️ System Architecture](#️-system-architecture)
-- [🔧 Technical Implementation](#-technical-implementation)
 - [👥 Features & Roles](#-features--roles)
 - [🛠️ Technologies Used](#️-technologies-used)
 - [📁 Project Structure](#-project-structure)
@@ -59,49 +58,25 @@ This project addresses the operational bottlenecks in healthcare facilities by p
 
 A highly normalized database handles the complex relationships between the core hospital entities.
 
-<table align="center">
-<tr>
-<td align="center"><b>🧑‍⚕️ Patients</b></td>
-<td align="center"><b>🩺 Doctors</b></td>
-<td align="center"><b>📅 Appointments</b></td>
-<td align="center"><b>💊 Treatments</b></td>
-</tr>
-<tr>
-<td align="center">Self-registering users</td>
-<td align="center">Specialized medical staff</td>
-<td align="center">Conflict-free bookings</td>
-<td align="center">Complete medical records</td>
-</tr>
-</table>
+| 🧑‍⚕️ Patients | 🩺 Doctors | 📅 Appointments | 💊 Treatments |
+| :---: | :---: | :---: | :---: |
+| Self-registering users | Specialized medical staff | Conflict-free bookings | Complete medical records |
 
 ---
 
 ## ✨ Key Features
 
-### 🔍 Advanced System Capabilities
+### 🔐 Security & Access
+* **JWT-based authentication** for secure sessions.
+* **Role-based access control (RBAC)** separating Admin, Doctor, and Patient views.
+* **Secure password hashing** protecting sensitive user credentials.
+* **Protected API endpoints** preventing unauthorized data access.
 
-<table>
-<tr>
-<td width="50%">
-
-#### 🔐 **Security & Access**
-- 🛡️ JWT-based authentication
-- 👤 Role-based access control (RBAC)
-- 🔒 Secure password hashing
-- 🚫 Protected API endpoints
-
-</td>
-<td width="50%">
-
-#### ⚡ **Performance & Automation**
-- 🔴 Redis caching for fast data retrieval
-- 🌿 Celery Beat for scheduled tasks
-- 📥 Asynchronous CSV exports
-- 📧 Automated HTML email reports
-
-</td>
-</tr>
-</table>
+### ⚡ Performance & Automation
+* **Redis caching** for lightning-fast data retrieval (e.g., doctor public lists).
+* **Celery Beat** for precisely scheduled background tasks.
+* **Asynchronous CSV exports** allowing patients to download data without freezing the UI.
+* **Automated HTML email reports** delivered directly to doctors' inboxes.
 
 ---
 
@@ -111,74 +86,37 @@ A highly normalized database handles the complex relationships between the core 
 
 ### 🎯 **Decoupled Client-Server Architecture**
 
-<img src="https://img.shields.io/badge/Frontend-Vue.js-4FC08D?style=for-the-badge" alt="Frontend">
-<img src="https://img.shields.io/badge/Backend-Flask-black?style=for-the-badge" alt="Backend">
-<img src="https://img.shields.io/badge/Workers-Celery-37814A?style=for-the-badge" alt="Workers">
+<img src="[https://img.shields.io/badge/Frontend-Vue.js-4FC08D?style=for-the-badge](https://img.shields.io/badge/Frontend-Vue.js-4FC08D?style=for-the-badge)" alt="Frontend">
+<img src="[https://img.shields.io/badge/Backend-Flask-black?style=for-the-badge](https://img.shields.io/badge/Backend-Flask-black?style=for-the-badge)" alt="Backend">
+<img src="[https://img.shields.io/badge/Workers-Celery-37814A?style=for-the-badge](https://img.shields.io/badge/Workers-Celery-37814A?style=for-the-badge)" alt="Workers">
 
 </div>
 
 ### 🌟 Component Interaction
 
-<div align="center">
-
-┌─────────────────────────────────────────────────────────────┐│                    🏥 System Components                     │├─────────────────────────────────────────────────────────────┤│                                                             ││  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐       ││  │    Vue.js    │  │  Flask API   │  │   SQLite DB  │       ││  │  📱 Client   │──▶  ⚙️ Server   │──▶  🗄️ Storage  │       ││  └──────────────┘  └───────┬──────┘  └──────────────┘       ││                            │                                ││                            ▼                                ││  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐       ││  │ Celery Beat  │  │ Redis Broker │  │ Celery Worker│       ││  │ ⏰ Scheduler │──▶  🔴 Cache    │◀──  🏭 Executor │       ││  └──────────────┘  └──────────────┘  └───────┬──────┘       ││                                              │              ││                                              ▼              ││                                      ┌──────────────┐       ││                                      │  Async Tasks │       ││                                      │ 📧 Emails/CSV│       ││                                      └──────────────┘       │└─────────────────────────────────────────────────────────────┘
-</div>
-
----
-
-## 👥 Features & Roles
-
-### 👑 Admin (Pre-created)
-*Dashboard with real-time stats, full system control.*
-* Add, update, and delete doctor profiles with specialties.
-* View all hospital appointments globally.
-* Remove/blacklist patients with automated cascade deletion.
-* Manually trigger Celery background jobs (Reminders/Reports).
-
-### 🩺 Doctor (Managed by Admin)
-*Dedicated portal for medical professionals.*
-* Set dynamic 7-day availability schedules.
-* Confirm or cancel pending patient appointments.
-* Create and edit detailed treatment records (diagnosis, prescription).
-* View complete medical histories of assigned patients.
-
-### 🧑‍⚕️ Patient (Self-Registration)
-*End-user booking and history portal.*
-* Search doctors by name or department specialization.
-* Book conflict-free appointments based on real-time availability.
-* Reschedule or cancel existing bookings.
-* **Export complete medical history as a CSV (Async Background Job).**
-
----
-
-## 🛠️ Technologies Used
-
-<div align="center">
-
-### 🐍 Backend Stack
-
-[![Python](https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://python.org)
-[![Flask](https://img.shields.io/badge/Flask-000000?style=for-the-badge&logo=flask&logoColor=white)](https://flask.palletsprojects.com/)
-[![SQLite](https://img.shields.io/badge/SQLite-07405E?style=for-the-badge&logo=sqlite&logoColor=white)](https://www.sqlite.org/)
-
-### 💚 Frontend Stack
-
-[![Vue.js](https://img.shields.io/badge/Vue.js-4FC08D?style=for-the-badge&logo=vuedotjs&logoColor=white)](https://vuejs.org/)
-[![Bootstrap](https://img.shields.io/badge/Bootstrap-7952B3?style=for-the-badge&logo=bootstrap&logoColor=white)](https://getbootstrap.com/)
-
-### ⚙️ DevOps & Background Workers
-
-[![Redis](https://img.shields.io/badge/Redis-DC382D?style=for-the-badge&logo=redis&logoColor=white)](https://redis.io/)
-[![Celery](https://img.shields.io/badge/Celery-37814A?style=for-the-badge&logo=celery&logoColor=white)](https://docs.celeryq.dev/)
-
-</div>
-
----
-
-## 📁 Project Structure
-
 ```text
-📦 Hospital_Management_System
+┌─────────────────────────────────────────────────────────────┐
+│                    🏥 System Components                     │
+├─────────────────────────────────────────────────────────────┤
+│                                                             │
+│  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐       │
+│  │    Vue.js    │  │  Flask API   │  │   SQLite DB  │       │
+│  │  📱 Client   │──▶  ⚙️ Server   │──▶  🗄️ Storage  │       │
+│  └──────────────┘  └───────┬──────┘  └──────────────┘       │
+│                            │                                │
+│                            ▼                                │
+│  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐       │
+│  │ Celery Beat  │  │ Redis Broker │  │ Celery Worker│       │
+│  │ ⏰ Scheduler │──▶  🔴 Cache    │◀──  🏭 Executor │       │
+│  └──────────────┘  └──────────────┘  └───────┬──────┘       │
+│                                              │              │
+│                                              ▼              │
+│                                      ┌──────────────┐       │
+│                                      │  Async Tasks │       │
+│                                      │ 📧 Emails/CSV│       │
+│                                      └──────────────┘       │
+└─────────────────────────────────────────────────────────────┘
+👥 Features & Roles👑 Admin (Pre-created)Dashboard with real-time stats, full system control.Add, update, and delete doctor profiles with specialties.View all hospital appointments globally.Remove/blacklist patients with automated cascade deletion.Manually trigger Celery background jobs (Reminders/Reports).🩺 Doctor (Managed by Admin)Dedicated portal for medical professionals.Set dynamic 7-day availability schedules.Confirm or cancel pending patient appointments.Create and edit detailed treatment records (diagnosis, prescription).View complete medical histories of assigned patients.🧑‍⚕️ Patient (Self-Registration)End-user booking and history portal.Search doctors by name or department specialization.Book conflict-free appointments based on real-time availability.Reschedule or cancel existing bookings.Export complete medical history as a CSV (Async Background Job).🛠️ Technologies Used🐍 Backend Stack💚 Frontend Stack⚙️ DevOps & Background Workers📁 Project StructurePlaintext📦 Hospital_Management_System
 ┣ 📂 backend                 # Flask Application API
 ┃ ┣ 📄 app.py               # Routes, Setup, Celery Tasks
 ┃ ┣ 📄 models.py            # SQLAlchemy Schema (6 Tables)
@@ -209,10 +147,6 @@ python -m venv venv
 source venv/bin/activate
 pip install -r requirements.txt
 python app.py
-💚 Terminal 5: Vue FrontendBashcd frontend
-npm install
-npm run serve
-# Runs on http://localhost:8080
 🌿 Terminal 3: Celery WorkerBashcd backend
 source venv/bin/activate
 celery -A app.celery worker --loglevel=info
@@ -221,13 +155,15 @@ celery -A app.celery worker --loglevel=info
 source venv/bin/activate
 celery -A app.celery beat --loglevel=info
 # Schedules recurring jobs
-🔑 Default Admin LoginPlaintextEmail: admin@hospital.com
-Pass:  admin123
-🔗 API Endpoints🔓 Public RoutesEndpointMethodDescriptionCache/registerPOSTPatient self-registration-/loginPOSTAuthenticate & get JWT-/doctorsGETList doctors & availability🟢 60s Redis👑 Admin Routes (JWT Required)EndpointMethodDescription/admin/dashboardGETSystem statistics/admin/add_doctorPOSTCreate doctor profile/admin/doctor/<id>DELETECascade delete doctor/admin/trigger/dailyPOSTManual trigger: reminders🩺 Doctor Routes (JWT Required)EndpointMethodDescription/doctor/appointmentsGETView assigned appointments/doctor/schedulePUTUpdate 7-day availability/doctor/treat_patientPOSTCreate medical record🧑‍⚕️ Patient Routes (JWT Required)EndpointMethodDescription/patient/bookPOSTConflict-free booking/patient/my_appointmentsGETView history & treatments/patient/export_historyPOSTTrigger async CSV export (Returns 202)⏰ Background Jobs⚙️ Celery Task Configuration🔔 Daily Patient RemindersPythonSchedule: crontab(hour=8, minute=0)
+💚 Terminal 5: Vue FrontendBashcd frontend
+npm install
+npm run serve
+# Runs on http://localhost:8080
+🔗 API Endpoints🔓 Public RoutesEndpointMethodDescriptionCache/registerPOSTPatient self-registration-/loginPOSTAuthenticate & get JWT-/doctorsGETList doctors & availability🟢 60s Redis👑 Admin Routes (JWT Required)EndpointMethodDescription/admin/dashboardGETSystem statistics/admin/add_doctorPOSTCreate doctor profile/admin/doctor/<id>DELETECascade delete doctor/admin/trigger/dailyPOSTManual trigger: reminders🩺 Doctor Routes (JWT Required)EndpointMethodDescription/doctor/appointmentsGETView assigned appointments/doctor/schedulePUTUpdate 7-day availability/doctor/treat_patientPOSTCreate medical record🧑‍⚕️ Patient Routes (JWT Required)EndpointMethodDescription/patient/bookPOSTConflict-free booking/patient/my_appointmentsGETView history & treatments/patient/export_historyPOSTTrigger async CSV export (Returns 202)⏰ Background Jobs🔔 Daily Patient RemindersPythonSchedule: crontab(hour=8, minute=0)
 Type: Beat Scheduled Task
 Runs at 8:00 AM IST. Queries all appointments for the current day and sends personalized email reminders to patients.📊 Monthly Doctor ReportsPythonSchedule: crontab(day='1', hour=0)
 Type: Beat Scheduled Task
-Runs on the 1st of every month. Compiles completed treatments and sends a styled HTML email report to doctors.📥 Patient CSV ExportPythonTrigger: User Requested via UI
+Runs on the 1st of every month. Compiles completed treatments and sends a styled Jinja2 HTML email report to doctors.📥 Patient CSV ExportPythonTrigger: User Requested via UI
 Type: Async Worker Task
 User clicks "Export" -> HTTP 202 returned immediately -> Worker generates CSV -> Saves to static/uploads/ -> Emails download link.🗄️ Database Design🎯 Entity Relationship & Cascade RulesMaster TableChild TableRelationshipCascade ActionUsersPatientsOne-to-Oneall, deleteUsersDoctorsOne-to-Oneall, deletePatientsAppointmentsOne-to-Manyall, delete-orphanDoctorsAppointmentsOne-to-Manyall, delete-orphanAppointmentsTreatmentsOne-to-Oneall, delete-orphanDepartmentsDoctorsOne-to-ManySET NULL👥 About the Author👩‍💻 Shrishti GuptaPassionate Data Science Student | Full Stack Developer | Problem Solver🎓 Academic BackgroundBachelor of Science in Data Science & Applications 🏛️ Indian Institute of Technology Madras (IIT Madras)🎓 Roll No: 23f2004336📚 Currently pursuing dual diplomas in:🤖 Diploma in Data Science (DL GENAI Track)💻 Diploma in Programming🌟 Areas of Interest🌐 Full-Stack Development  •  🤖 Machine Learning  •  🧠 Deep Learning / GenAI
 🔬 API Architecture  •  📈 Predictive Analytics  •  🎯 Automation
