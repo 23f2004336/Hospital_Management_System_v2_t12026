@@ -1,171 +1,402 @@
 <div align="center">
 
-# 🏥 MediCare Hospital Management System 💊
+<img src="https://img.icons8.com/fluency/96/hospital.png" alt="MediCare HMS" width="80"/>
 
-### *Streamlining Healthcare Operations: A Comprehensive Full-Stack Solution for Doctors, Patients, and Administrators*
+# 🏥 MediCare — Hospital Management System
 
-[![Flask](https://img.shields.io/badge/Flask-3.1+-black.svg?logo=flask)](https://flask.palletsprojects.com/)
-[![Vue.js](https://img.shields.io/badge/Vue.js-3.0+-4FC08D.svg?logo=vuedotjs&logoColor=white)](https://vuejs.org/)
-[![SQLite](https://img.shields.io/badge/SQLite-3.0+-07405E.svg?logo=sqlite&logoColor=white)](https://www.sqlite.org/)
-[![Redis](https://img.shields.io/badge/Redis-7.0+-DC382D.svg?logo=redis&logoColor=white)](https://redis.io/)
-[![Celery](https://img.shields.io/badge/Celery-5.0+-37814A.svg?logo=celery&logoColor=white)](https://docs.celeryq.dev/)
-[![Bootstrap](https://img.shields.io/badge/Bootstrap-5.0+-7952B3.svg?logo=bootstrap&logoColor=white)](https://getbootstrap.com/)
+**A production-grade, full-stack web application for digitizing hospital operations**  
+*Role-based · Async-first · Conflict-safe · Cache-optimized*
 
-<img src="[https://img.shields.io/badge/Status-Complete-success](https://img.shields.io/badge/Status-Complete-success)" alt="Status">
-<img src="[https://img.shields.io/badge/Course-App%20Dev%20II-brightgreen](https://img.shields.io/badge/Course-App%20Dev%20II-brightgreen)" alt="App Dev II">
-<img src="[https://img.shields.io/badge/IIT%20Madras-Data%20Science-blue](https://img.shields.io/badge/IIT%20Madras-Data%20Science-blue)" alt="IIT Madras">
+[![Flask](https://img.shields.io/badge/Flask-3.1+-000000?style=for-the-badge&logo=flask&logoColor=white)](https://flask.palletsprojects.com/)
+[![Vue.js](https://img.shields.io/badge/Vue.js-3.0+-4FC08D?style=for-the-badge&logo=vuedotjs&logoColor=white)](https://vuejs.org/)
+[![Celery](https://img.shields.io/badge/Celery-5.0+-37814A?style=for-the-badge&logo=celery&logoColor=white)](https://docs.celeryq.dev/)
+[![Redis](https://img.shields.io/badge/Redis-7.0+-DC382D?style=for-the-badge&logo=redis&logoColor=white)](https://redis.io/)
+[![SQLite](https://img.shields.io/badge/SQLite-3.0+-07405E?style=for-the-badge&logo=sqlite&logoColor=white)](https://www.sqlite.org/)
+[![Bootstrap](https://img.shields.io/badge/Bootstrap-5.0+-7952B3?style=for-the-badge&logo=bootstrap&logoColor=white)](https://getbootstrap.com/)
+[![Python](https://img.shields.io/badge/Python-3.10+-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://www.python.org/)
 
----
-
-### 🌟 A robust, role-based web application leveraging asynchronous background jobs and a decoupled architecture to manage hospital workflows seamlessly.
-
-[🚀 Quick Start](#-getting-started) • [👥 Features & Roles](#-features--roles) • [🔗 API Details](#-api-endpoints) • [🗄️ Database](#-database-design) • [👥 Author](#-about-the-author)
+[![IIT Madras](https://img.shields.io/badge/IIT%20Madras-BS%20Data%20Science-blue?style=flat-square)](https://study.iitm.ac.in/)
+[![App Dev II](https://img.shields.io/badge/Course-App%20Development%20II-orange?style=flat-square)](#)
+[![Stack](https://img.shields.io/badge/Stack-Flask%20%2B%20Vue.js%20%2B%20Celery-informational?style=flat-square)](#)
 
 </div>
 
 ---
 
-## 📋 Table of Contents
+## 📌 Overview
 
-- [🎯 Project Overview](#-project-overview)
-- [✨ Key Features](#-key-features)
-- [🏗️ System Architecture](#️-system-architecture)
-- [👥 Features & Roles](#-features--roles)
-- [🛠️ Technologies Used](#️-technologies-used)
-- [📁 Project Structure](#-project-structure)
-- [🚀 Getting Started](#-getting-started)
-- [🔗 API Endpoints](#-api-endpoints)
-- [⏰ Background Jobs](#-background-jobs)
-- [🗄️ Database Design](#-database-design)
-- [👥 About the Author](#-about-the-author)
-- [📞 Connect With Me](#-connect-with-me)
+**MediCare** is a role-based hospital management web application that solves real operational pain points in healthcare — scheduling conflicts, paper records, and disconnected workflows. It delivers a **decoupled REST API** (Flask) paired with a **reactive SPA** (Vue.js 3), powered by **asynchronous task workers** (Celery + Redis) that automate appointment reminders, doctor reports, and patient data exports.
+
+> **What makes this technically interesting:** Beyond standard CRUD, this system implements JWT-based RBAC across three distinct roles, database-level double-booking prevention, Redis response caching with TTL, and three Celery job patterns — time-scheduled, periodic monthly, and user-triggered async with HTTP 202 Accepted.
 
 ---
 
-## 🎯 Project Overview
+## 🧠 System Architecture
 
-<div align="center">
+```
+┌──────────────────────────────────────────────────────────────┐
+│                          CLIENT                              │
+│          Vue.js 3 SPA  ·  Vue Router  ·  Axios  ·  Bootstrap │
+└────────────────────────┬─────────────────────────────────────┘
+                         │  REST API  (JWT Bearer Token)
+┌────────────────────────▼─────────────────────────────────────┐
+│                      FLASK BACKEND                           │
+│     RESTful Routes  ·  Flask-SQLAlchemy ORM  ·  JWT Auth     │
+│     Flask-Caching  ·  Flask-Mail  ·  Jinja2 Email Templates  │
+└───────────┬──────────────────────────────┬───────────────────┘
+            │                              │
+┌───────────▼──────────┐     ┌─────────────▼──────────────────┐
+│      SQLite DB       │     │      Redis (Broker + Cache)    │
+│  6 normalized tables │     │  TTL caching · Task queue      │
+└──────────────────────┘     └─────────────┬──────────────────┘
+                                           │
+                              ┌────────────▼───────────────────┐
+                              │      Celery Worker + Beat      │
+                              │  • Daily reminders (8 AM IST)  │
+                              │  • Monthly HTML reports (1st)  │
+                              │  • Async CSV export on-demand  │
+                              └────────────────────────────────┘
+```
 
-### 💡 **The Challenge**
+### Engineering Decisions
 
-*How can we efficiently digitize hospital operations while ensuring secure access control, preventing scheduling conflicts, and automating routine administrative tasks?*
-
-</div>
-
-This project addresses the operational bottlenecks in healthcare facilities by providing a unified digital platform. By integrating a Flask RESTful API with a reactive Vue.js frontend and Celery-powered background workers, the system automates appointment reminders, monthly reporting, and secure patient data management.
-
-### 🎲 System Entities
-
-A highly normalized database handles the complex relationships between the core hospital entities.
-
-| 🧑‍⚕️ Patients | 🩺 Doctors | 📅 Appointments | 💊 Treatments |
-| :---: | :---: | :---: | :---: |
-| Self-registering users | Specialized medical staff | Conflict-free bookings | Complete medical records |
+| Concern | Approach | Rationale |
+|---|---|---|
+| Authentication | JWT via `Flask-JWT-Extended` | Stateless; roles encoded in token payload |
+| Double-booking | DB constraint + API validation layer | Prevents race conditions at the data level |
+| API performance | `Flask-Caching` + Redis TTL | High-read endpoints (doctor list) served from cache |
+| Heavy exports | Celery async task → HTTP 202 | Non-blocking UX; user notified by email on completion |
+| DB initialization | `db.create_all()` + programmatic seed | No manual DB creation; admin seeded automatically |
+| Password security | `Werkzeug generate_password_hash` | Passwords never stored as plain text |
 
 ---
 
-## ✨ Key Features
+## 👥 Roles & Features
 
-### 🔐 Security & Access
-* **JWT-based authentication** for secure sessions.
-* **Role-based access control (RBAC)** separating Admin, Doctor, and Patient views.
-* **Secure password hashing** protecting sensitive user credentials.
-* **Protected API endpoints** preventing unauthorized data access.
+### 👑 Admin
+> Pre-seeded on first run — no registration endpoint. Single superuser identified by `role = 'admin'`.
 
-### ⚡ Performance & Automation
-* **Redis caching** for lightning-fast data retrieval (e.g., doctor public lists).
-* **Celery Beat** for precisely scheduled background tasks.
-* **Asynchronous CSV exports** allowing patients to download data without freezing the UI.
-* **Automated HTML email reports** delivered directly to doctors' inboxes.
+- Dashboard with live counts: total doctors, patients, appointments
+- Add, update, and delete doctor profiles (name, specialization, qualification, fee, contact)
+- View and manage **all** appointments across the hospital
+- Search patients by name, email, or contact information
+- Remove or blacklist doctors and patients (cascades to related records)
+- **Manually trigger** daily reminder and monthly report Celery jobs from the dashboard
+
+### 🩺 Doctor
+> Accounts created by Admin only. Doctors cannot self-register.
+
+- Private dashboard: upcoming (Booked/Confirmed) and past (Completed/Cancelled) appointments
+- Set a custom **7-day availability schedule** — start time, end time, off-duty days
+- Confirm or cancel patient appointments
+- Fill treatment form: diagnosis, prescription, notes, next visit date → marks appointment Completed
+- View and edit full medical history of any assigned patient
+
+### 🧑‍⚕️ Patient
+> Full self-service portal — register, search, book, manage.
+
+- Self-registration and login with hashed passwords
+- Search doctors by name or specialization (dropdown filter)
+- View doctor availability for the next 7 days before booking
+- Book appointments with **conflict prevention** — same doctor, date, and time cannot be double-booked
+- Reschedule or cancel existing bookings
+- View appointment history: status, diagnosis, prescription, notes, next visit date
+- Edit personal profile: name, gender, date of birth, address, phone
+- **Trigger async CSV export** of full treatment history — download link delivered by email
 
 ---
 
-## 🏗️ System Architecture
+## ⚙️ Background Jobs (Celery + Redis)
 
-<div align="center">
+Three production-grade Celery patterns implemented:
 
-### 🎯 **Decoupled Client-Server Architecture**
+### 🔔 Daily Patient Reminders — Scheduled (Celery Beat)
+```
+Trigger : Automated · Every day at 08:00 AM IST
+Pattern : crontab(hour=8, minute=0)
+```
+Queries all appointments with today's date → sends a personalized email reminder to each patient via Flask-Mail.
 
-<img src="[https://img.shields.io/badge/Frontend-Vue.js-4FC08D?style=for-the-badge](https://img.shields.io/badge/Frontend-Vue.js-4FC08D?style=for-the-badge)" alt="Frontend">
-<img src="[https://img.shields.io/badge/Backend-Flask-black?style=for-the-badge](https://img.shields.io/badge/Backend-Flask-black?style=for-the-badge)" alt="Backend">
-<img src="[https://img.shields.io/badge/Workers-Celery-37814A?style=for-the-badge](https://img.shields.io/badge/Workers-Celery-37814A?style=for-the-badge)" alt="Workers">
+---
 
-</div>
+### 📊 Monthly Doctor Activity Report — Periodic (Celery Beat)
+```
+Trigger : Automated · 1st of every month at 00:00
+Pattern : crontab(day_of_month=1, hour=0)
+```
+Compiles all completed appointments and treatments for the prior month → renders a **styled Jinja2 HTML email** → delivered to each doctor's registered inbox.
 
-### 🌟 Component Interaction
+---
 
-```text
-┌─────────────────────────────────────────────────────────────┐
-│                    🏥 System Components                     │
-├─────────────────────────────────────────────────────────────┤
-│                                                             │
-│  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐       │
-│  │    Vue.js    │  │  Flask API   │  │   SQLite DB  │       │
-│  │  📱 Client   │──▶  ⚙️ Server   │──▶  🗄️ Storage  │       │
-│  └──────────────┘  └───────┬──────┘  └──────────────┘       │
-│                            │                                │
-│                            ▼                                │
-│  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐       │
-│  │ Celery Beat  │  │ Redis Broker │  │ Celery Worker│       │
-│  │ ⏰ Scheduler │──▶  🔴 Cache    │◀──  🏭 Executor │       │
-│  └──────────────┘  └──────────────┘  └───────┬──────┘       │
-│                                              │              │
-│                                              ▼              │
-│                                      ┌──────────────┐       │
-│                                      │  Async Tasks │       │
-│                                      │ 📧 Emails/CSV│       │
-│                                      └──────────────┘       │
-└─────────────────────────────────────────────────────────────┘
-👥 Features & Roles👑 Admin (Pre-created)Dashboard with real-time stats, full system control.Add, update, and delete doctor profiles with specialties.View all hospital appointments globally.Remove/blacklist patients with automated cascade deletion.Manually trigger Celery background jobs (Reminders/Reports).🩺 Doctor (Managed by Admin)Dedicated portal for medical professionals.Set dynamic 7-day availability schedules.Confirm or cancel pending patient appointments.Create and edit detailed treatment records (diagnosis, prescription).View complete medical histories of assigned patients.🧑‍⚕️ Patient (Self-Registration)End-user booking and history portal.Search doctors by name or department specialization.Book conflict-free appointments based on real-time availability.Reschedule or cancel existing bookings.Export complete medical history as a CSV (Async Background Job).🛠️ Technologies Used🐍 Backend Stack💚 Frontend Stack⚙️ DevOps & Background Workers📁 Project StructurePlaintext📦 Hospital_Management_System
-┣ 📂 backend                 # Flask Application API
-┃ ┣ 📄 app.py               # Routes, Setup, Celery Tasks
-┃ ┣ 📄 models.py            # SQLAlchemy Schema (6 Tables)
-┃ ┣ 📄 config.py            # Configurations & JWT Secrets
-┃ ┣ 📂 templates
-┃ ┃ ┗ 📄 monthly_report.html# Jinja2 Email Template
-┃ ┣ 📂 static/uploads       # Async CSV Exports
-┃ ┗ 🗄️ hospital.db          # Auto-generated database
-┣ 📂 frontend                # Vue.js SPA
-┃ ┣ 📂 src
-┃ ┃ ┣ 📂 views
-┃ ┃ ┃ ┣ 📄 AdminDashboard.vue
-┃ ┃ ┃ ┣ 📄 DoctorDashboard.vue
-┃ ┃ ┃ ┗ 📄 PatientDashboard.vue
-┃ ┃ ┗ 📂 router
-┃ ┃   ┗ 📄 index.js         # Vue Router Configuration
-┃ ┣ 📄 package.json
-┃ ┗ 📄 vue.config.js
-┣ 📄 requirements.txt
-┗ 📄 README.md
-🚀 Getting Started📋 Prerequisites[!WARNING]You need 5 terminals running simultaneously. Keep them all open throughout development.💻 5-Terminal Setup Guide🔴 Terminal 1: Redis ServerBash# Start the message broker
+### 📥 Patient CSV Export — User-Triggered Async (Celery Worker)
+```
+Trigger : Patient clicks "Export" in dashboard
+Response: HTTP 202 Accepted (immediate, non-blocking)
+```
+Celery worker generates a CSV containing:
+`user_id · username · consulting_doctor · appointment_date · diagnosis · treatment · next_visit`
+
+File saved to `static/uploads/` → download link emailed to patient on completion.
+
+---
+
+## 🗄️ Database Schema
+
+Six normalized tables with explicit cascade rules — created entirely via `SQLAlchemy` models, no manual DB setup.
+
+```
+┌─────────────────────────────────────────────────────────────────────┐
+│  USERS           DEPARTMENTS                                        │
+│  ─────────────   ────────────────                                   │
+│  id (PK)         department_id (PK)                                 │
+│  username        department_name                                    │
+│  password        description                                        │
+│  email               │                                              │
+│  role                │ contains (1:M)                               │
+│  is_active           ▼                                              │
+│  first_name    DOCTORS ────────────────────────────────┐            │
+│  last_name     ─────────────────────────────────────   │            │
+│      │         id (PK)   user_id (FK→Users)            │            │
+│      │         department_id (FK→Departments, SET NULL) │            │
+│      │         specialization   experience             │            │
+│      │         qualification    consultation_fee       │            │
+│      │         availability     address   phone_number │            │
+│      │                                    attends (1:M)│            │
+│  has profile (1:1)                                     │            │
+│      │                        APPOINTMENTS ◄───────────┘            │
+│      ▼                        ─────────────────────────             │
+│  PATIENTS                     id (PK)                               │
+│  ─────────────────────        patient_id (FK→Patients, cascade)     │
+│  id (PK)                      doctor_id  (FK→Doctors,  cascade)     │
+│  user_id (FK→Users)           appointment_date   appointment_time   │
+│  date_of_birth                appointment_status  reason            │
+│  gender  address                      │                             │
+│  phone_number                         │ results in (1:1)            │
+│      │ books (1:M)                    ▼                             │
+│      └─────────────────►  TREATMENTS                                │
+│                           ──────────────────────────────────        │
+│                           id (PK)   appointment_id (FK, cascade)    │
+│                           diagnosis     prescription                │
+│                           notes         treatment_date              │
+│                           next_visit                                │
+└─────────────────────────────────────────────────────────────────────┘
+```
+
+**Cascade policy:**
+- Delete `Doctor` → cascades to their `Appointments` → cascades to `Treatments`
+- Delete `Patient` → cascades to their `Appointments` → cascades to `Treatments`
+- Delete `Department` → sets `doctor.department_id = NULL` (non-destructive)
+
+---
+
+## 🔗 API Endpoints
+
+### 🔓 Public
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| `POST` | `/register` | Patient self-registration |
+| `POST` | `/login` | Authenticate (all roles) → returns JWT |
+| `GET` | `/doctors` | Public doctor list with availability ✅ *Redis cached* |
+
+### 👑 Admin *(JWT Required)*
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| `GET` | `/admin/stats` | Dashboard: total doctors, patients, appointments |
+| `GET` | `/admin/doctors` | List all doctors |
+| `POST` | `/admin/doctors` | Add new doctor profile |
+| `PUT` | `/admin/update_doctor/<id>` | Update doctor details |
+| `GET` | `/admin/patients` | List all patients |
+| `DELETE` | `/admin/patient/<id>` | Remove / blacklist patient |
+| `PUT` | `/admin/patient/<id>` | Edit patient record |
+| `GET` | `/admin/appointments` | View all hospital appointments |
+| `POST` | `/admin/trigger/daily` | Manually fire daily reminder job |
+| `POST` | `/admin/trigger/monthly` | Manually fire monthly report job |
+
+### 🩺 Doctor *(JWT Required)*
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| `GET` | `/doctor/appointments` | View own appointments |
+| `GET/PUT` | `/doctor/schedule` | Get or update 7-day availability |
+| `PUT` | `/doctor/appointment/<id>` | Mark Confirmed or Cancelled |
+| `POST` | `/doctor/treat_patient` | Save diagnosis, prescription, notes |
+| `GET` | `/doctor/patient_history/<id>` | Full patient treatment history |
+| `PUT` | `/doctor/update_treatment/<id>` | Edit an existing treatment record |
+
+### 🧑‍⚕️ Patient *(JWT Required)*
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| `GET` | `/patient/doctors` | Doctor list with availability |
+| `GET` | `/patient/my_appointments` | Appointment history + treatment details |
+| `POST` | `/patient/book` | Book appointment (conflict-checked) |
+| `PUT` | `/patient/appointment/<id>/cancel` | Cancel a booking |
+| `PUT` | `/patient/appointment/<id>/reschedule` | Reschedule a booking |
+| `GET/PUT` | `/patient/profile` | View or update personal profile |
+| `POST` | `/patient/export_history` | Trigger async CSV export → returns **202** |
+
+---
+
+## 🛠️ Tech Stack
+
+| Layer | Technology | Role |
+|-------|-----------|------|
+| **Frontend** | Vue.js 3 | Reactive SPA, component-based UI |
+| **HTTP Client** | Axios | API calls from Vue to Flask |
+| **Routing** | Vue Router 4 | Client-side routing + JWT route guards |
+| **Styling** | Bootstrap 5 | Responsive layout, modals, forms, tables |
+| **Backend** | Flask 3.1+ | RESTful API server |
+| **ORM** | Flask-SQLAlchemy | Python model definitions, query layer |
+| **Auth** | Flask-JWT-Extended | JWT issuance, verification, RBAC |
+| **Password Security** | Werkzeug | `generate_password_hash` — no plain-text storage |
+| **Database** | SQLite | Normalized 6-table schema, programmatic init |
+| **Cache** | Flask-Caching + Redis | TTL-based API response caching |
+| **Task Queue** | Celery | Scheduled + async background workers |
+| **Broker** | Redis | Celery message broker |
+| **Email** | Flask-Mail | Appointment reminders, reports, CSV links |
+| **Templates** | Jinja2 | Styled HTML email generation |
+
+---
+
+## 📁 Project Structure
+
+```
+Hospital_Management_System/
+│
+├── backend/
+│   ├── app.py                    # Flask app, all routes, Celery task definitions
+│   ├── models.py                 # SQLAlchemy models: Users, Patients, Doctors,
+│   │                             #   Departments, Appointments, Treatments
+│   ├── config.py                 # JWT secret, Redis URL, mail config, cache settings
+│   ├── templates/
+│   │   └── monthly_report.html   # Jinja2 HTML template for doctor email reports
+│   ├── static/
+│   │   └── uploads/              # Generated CSV files land here (async export)
+│   └── hospital.db               # Auto-created + seeded on first run
+│
+├── frontend/
+│   ├── src/
+│   │   ├── views/
+│   │   │   ├── AdminDashboard.vue
+│   │   │   ├── DoctorDashboard.vue
+│   │   │   ├── PatientDashboard.vue
+│   │   │   ├── Login.vue
+│   │   │   └── Register.vue
+│   │   ├── components/             # Reusable Vue components
+│   │   └── router/
+│   │       └── index.js            # Route definitions + JWT-based route guards
+│   ├── vue.config.js               # Dev proxy → Flask :5000
+│   └── package.json
+│
+├── requirements.txt
+└── README.md
+```
+
+---
+
+## 🚀 Getting Started
+
+### Prerequisites
+
+- Python 3.10+
+- Node.js 16+
+- Redis running locally (`redis-server`)
+
+### Setup
+
+**1. Clone the repo**
+```bash
+git clone https://github.com/23f2004336/Hospital_Management_System_v2_t12026.git
+cd Hospital_Management_System_v2_t12026/Hospital_Management_System_23f2004336
+```
+
+**2. Configure environment**
+
+Create a `.env` file inside `backend/`:
+```env
+SECRET_KEY=your-flask-secret
+JWT_SECRET_KEY=your-jwt-secret
+MAIL_SERVER=smtp.gmail.com
+MAIL_PORT=587
+MAIL_USE_TLS=True
+MAIL_USERNAME=your-email@gmail.com
+MAIL_PASSWORD=your-app-password
+REDIS_URL=redis://localhost:6379/0
+```
+
+**3. Start all five services** (separate terminals)
+
+```bash
+# Terminal 1 — Redis
 redis-server
 
-# Verify connection
-redis-cli ping
-🐍 Terminal 2: Flask BackendBashcd backend
-python -m venv venv
-source venv/bin/activate
+# Terminal 2 — Flask backend (auto-creates DB + seeds admin on first run)
+cd backend && python -m venv venv && source venv/bin/activate
 pip install -r requirements.txt
-python app.py
-🌿 Terminal 3: Celery WorkerBashcd backend
-source venv/bin/activate
+python app.py                          # → http://localhost:5000
+
+# Terminal 3 — Celery worker
+cd backend && source venv/bin/activate
 celery -A app.celery worker --loglevel=info
-# Executes background tasks
-⏰ Terminal 4: Celery BeatBashcd backend
-source venv/bin/activate
+
+# Terminal 4 — Celery beat scheduler
+cd backend && source venv/bin/activate
 celery -A app.celery beat --loglevel=info
-# Schedules recurring jobs
-💚 Terminal 5: Vue FrontendBashcd frontend
-npm install
-npm run serve
-# Runs on http://localhost:8080
-🔗 API Endpoints🔓 Public RoutesEndpointMethodDescriptionCache/registerPOSTPatient self-registration-/loginPOSTAuthenticate & get JWT-/doctorsGETList doctors & availability🟢 60s Redis👑 Admin Routes (JWT Required)EndpointMethodDescription/admin/dashboardGETSystem statistics/admin/add_doctorPOSTCreate doctor profile/admin/doctor/<id>DELETECascade delete doctor/admin/trigger/dailyPOSTManual trigger: reminders🩺 Doctor Routes (JWT Required)EndpointMethodDescription/doctor/appointmentsGETView assigned appointments/doctor/schedulePUTUpdate 7-day availability/doctor/treat_patientPOSTCreate medical record🧑‍⚕️ Patient Routes (JWT Required)EndpointMethodDescription/patient/bookPOSTConflict-free booking/patient/my_appointmentsGETView history & treatments/patient/export_historyPOSTTrigger async CSV export (Returns 202)⏰ Background Jobs🔔 Daily Patient RemindersPythonSchedule: crontab(hour=8, minute=0)
-Type: Beat Scheduled Task
-Runs at 8:00 AM IST. Queries all appointments for the current day and sends personalized email reminders to patients.📊 Monthly Doctor ReportsPythonSchedule: crontab(day='1', hour=0)
-Type: Beat Scheduled Task
-Runs on the 1st of every month. Compiles completed treatments and sends a styled Jinja2 HTML email report to doctors.📥 Patient CSV ExportPythonTrigger: User Requested via UI
-Type: Async Worker Task
-User clicks "Export" -> HTTP 202 returned immediately -> Worker generates CSV -> Saves to static/uploads/ -> Emails download link.🗄️ Database Design🎯 Entity Relationship & Cascade RulesMaster TableChild TableRelationshipCascade ActionUsersPatientsOne-to-Oneall, deleteUsersDoctorsOne-to-Oneall, deletePatientsAppointmentsOne-to-Manyall, delete-orphanDoctorsAppointmentsOne-to-Manyall, delete-orphanAppointmentsTreatmentsOne-to-Oneall, delete-orphanDepartmentsDoctorsOne-to-ManySET NULL👥 About the Author👩‍💻 Shrishti GuptaPassionate Data Science Student | Full Stack Developer | Problem Solver🎓 Academic BackgroundBachelor of Science in Data Science & Applications 🏛️ Indian Institute of Technology Madras (IIT Madras)🎓 Roll No: 23f2004336📚 Currently pursuing dual diplomas in:🤖 Diploma in Data Science (DL GENAI Track)💻 Diploma in Programming🌟 Areas of Interest🌐 Full-Stack Development  •  🤖 Machine Learning  •  🧠 Deep Learning / GenAI
-🔬 API Architecture  •  📈 Predictive Analytics  •  🎯 Automation
-💡 Problem Solving  •  🗄️ Database Design  •  🔍 Research
-📞 Connect With Me🤝 Let's Collaborate and Build Something Amazing!💼 LinkedIn💻 GitHub📧 Email📊 GitHub Stats💖 Thank you for visiting!Made with ❤️ by Shrishti Gupta | IIT Madras Data Science StudentLast Updated: January 2026
+
+# Terminal 5 — Vue.js frontend
+cd frontend && npm install
+npm run serve                          # → http://localhost:8080
+```
+
+### Default Admin Login
+```
+Username : admin
+Password : admin123
+```
+> Admin is seeded programmatically — no `/admin/register` endpoint exists by design.
+
+---
+
+## 🔐 Security
+
+- **Password hashing** — Werkzeug's `generate_password_hash`; plain-text passwords are never stored
+- **JWT authentication** — tokens issued on login, verified on every protected route
+- **Role-based access control** — patients cannot reach admin or doctor routes; enforced at the API layer
+- **Ownership enforcement** — doctors can only edit treatment records tied to their own appointments
+
+---
+
+## 🎬 Demo
+
+📽️ **Video Walkthrough:** [Watch on Google Drive](https://drive.google.com/file/d/1gj1xI3O2vo4OZGbRU5oOdfH0OK_6oxd/view?usp=sharing)
+
+---
+
+## 📄 License
+
+This project is licensed under the **MIT License**.
+
+---
+
+<div align="center">
+
+## 👩‍💻 About the Author
+
+**Shrishti Gupta**  
+*Data Science Student · ML Engineer · Full-Stack Developer*
+
+🎓 **B.Sc. Data Science & Applications** — Indian Institute of Technology Madras  
+*Dual Diploma: Data Science (Deep Learning & GenAI) + Programming*
+
+[![LinkedIn](https://img.shields.io/badge/LinkedIn-Connect-0A66C2?style=for-the-badge&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/shrishti-gupta-iitm/)
+[![GitHub](https://img.shields.io/badge/GitHub-Follow-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/23f2004336)
+
+*Open to opportunities in ML Engineering, Backend Development, and Full-Stack roles.*
+
+---
+
+*Made with ❤️ · IIT Madras · Jan 2026*
+
+</div>
